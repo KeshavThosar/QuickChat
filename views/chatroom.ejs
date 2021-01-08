@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+</head>
+<body>
+    <p>Room: <%= room %></p>
+    <div class="chat">
+        <div id="chat-window">
+    
+        </div>
+        <form id="chat-input">
+          <input type="text" name="msg" id="msg" placeholder="Type your Message" value="" size="110">
+          <button onclick="sendMessage()">Send</button>
+        </form>
+      </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.getElementById("chat-input").addEventListener("submit", (event) => {
+            event.preventDefault();
+        })
+        const socket = io();
+        socket.emit('join', {room: location.pathname.replace('/quick-chat/', '')});
+        socket.on('chat_message', ({message}) => {
+            document.getElementById('chat-window').innerHTML += `<p class="recieved">${message}</p>`
+        })
+        const sendMessage = () => {
+            socket.emit('chat_message', {message: document.getElementById('msg').value , room: location.pathname.replace('/quick-chat/', '')})
+            document.getElementById('chat-window').innerHTML += `<p class="sent">${document.getElementById('msg').value}</p>`
+        };
+        
+    </script>
+</body>
+</html>
